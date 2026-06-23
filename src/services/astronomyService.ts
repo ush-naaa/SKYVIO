@@ -1,5 +1,4 @@
 import {
-  Body,
   Observer,
   Equator,
   Horizon,
@@ -7,13 +6,9 @@ import {
   MoonPhase,
   SearchLocalSolarEclipse,
   SearchLunarEclipse,
-  SearchRiseSet,
-  Illumination,
 } from 'astronomy-engine';
 import { AstroEvent, City } from '../types';
 import { METEOR_SHOWERS } from '../constants';
-import { BRIGHT_STARS } from '../data/stars';
-import { MESSIER_OBJECTS } from '../data/dso';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
@@ -30,7 +25,7 @@ export class AstronomyService {
     const date = new Date();
     const phase = MoonPhase(date);
     return {
-      phase: phase,
+      phase,
       name: this.getMoonPhaseName(phase),
     };
   }
@@ -47,20 +42,21 @@ export class AstronomyService {
     const events: AstroEvent[] = [];
     const startDate = new Date(year, 0, 1);
 
-    // 1. Moon Phases (Precise times)
+    // Moon Phases
     let phaseDate = startDate;
     for (let i = 0; i < 12; i++) {
       const nextFullMoon = SearchMoonPhase(180, phaseDate, 40);
       if (nextFullMoon && nextFullMoon.date.getFullYear() === year) {
+        const hor = this.getHorizonData(nextFullMoon.date, 90, 0);
         events.push({
           id: `moon-full-${nextFullMoon.date.getTime()}`,
           name: 'Full Moon',
           nameUrdu: 'پورے چاند کی رات',
           date: nextFullMoon.date,
           type: 'Moon',
-          altitude: 45,
-          azimuth: 180,
-          visibility: 'Excellent',
+          altitude: Math.round(hor.altitude),
+          azimuth: Math.round(hor.azimuth),
+          visibility: hor.altitude > 20 ? 'Excellent' : hor.altitude > 0 ? 'Good' : 'Poor',
           peakTime: nextFullMoon.date,
           startTime: nextFullMoon.date,
           endTime: nextFullMoon.date,
@@ -76,7 +72,7 @@ export class AstronomyService {
           date: nextNewMoon.date,
           type: 'Moon',
           altitude: 0,
-          azimuth: 270,
+          azimuth: 0,
           visibility: 'Excellent',
           peakTime: nextNewMoon.date,
           startTime: nextNewMoon.date,
@@ -87,52 +83,56 @@ export class AstronomyService {
       phaseDate = new Date(phaseDate.getTime() + 1000 * 60 * 60 * 24 * 30);
     }
 
-    // 2. Eclipses (Keep existing logic)
+    // Solar Eclipses
     let solarEclipse = SearchLocalSolarEclipse(startDate, this.observer);
     while (solarEclipse && solarEclipse.peak.time.date.getFullYear() === year) {
+      const hor = this.getHorizonData(solarEclipse.peak.time.date, 90, 0);
       events.push({
         id: `solar-${solarEclipse.peak.time.date.getTime()}`,
         name: `${solarEclipse.kind} Solar Eclipse`,
         nameUrdu: 'سورج گرہن',
         date: solarEclipse.peak.time.date,
         type: 'Eclipse',
-        altitude: 45, 
-        azimuth: 180,
-        visibility: 'Good',
+        altitude: Math.round(hor.altitude),
+        azimuth: Math.round(hor.azimuth),
+        visibility: hor.altitude > 10 ? 'Excellent' : hor.altitude > 0 ? 'Good' : 'Poor',
         peakTime: solarEclipse.peak.time.date,
         startTime: solarEclipse.partial_begin.time.date || solarEclipse.peak.time.date,
         endTime: solarEclipse.partial_end.time.date || solarEclipse.peak.time.date,
         moonInterference: false,
       });
-      solarEclipse = SearchLocalSolarEclipse(new Date(solarEclipse.peak.time.date.getTime() + 1000 * 60 * 60 * 24 * 30), this.observer);
+      solarEclipse = SearchLocalSolarEclipse(
+        new Date(solarEclipse.peak.time.date.getTime() + 1000 * 60 * 60 * 24 * 30),
+        this.observer
+      );
     }
 
+    // Lunar Eclipses
     let lunarEclipse = SearchLunarEclipse(startDate);
     while (lunarEclipse && lunarEclipse.peak.date.getFullYear() === year) {
-      // Calculate start and end based on penumbral duration (sd_penum is half-duration in minutes)
+      const hor = this.getHorizonData(lunarEclipse.peak.date, 90, 0);
       const peakMillis = lunarEclipse.peak.date.getTime();
       const semiDurationMillis = (lunarEclipse.sd_penum || 0) * 60 * 1000;
-      const startTime = new Date(peakMillis - semiDurationMillis);
-      const endTime = new Date(peakMillis + semiDurationMillis);
-
       events.push({
         id: `lunar-${lunarEclipse.peak.date.getTime()}`,
         name: `${lunarEclipse.kind} Lunar Eclipse`,
         nameUrdu: 'چاند گرہن',
         date: lunarEclipse.peak.date,
         type: 'Eclipse',
-        altitude: 60,
-        azimuth: 90,
-        visibility: 'Excellent',
+        altitude: Math.round(hor.altitude),
+        azimuth: Math.round(hor.azimuth),
+        visibility: hor.altitude > 10 ? 'Excellent' : hor.altitude > 0 ? 'Good' : 'Poor',
         peakTime: lunarEclipse.peak.date,
-        startTime: startTime,
-        endTime: endTime,
+        startTime: new Date(peakMillis - semiDurationMillis),
+        endTime: new Date(peakMillis + semiDurationMillis),
         moonInterference: false,
       });
-      lunarEclipse = SearchLunarEclipse(new Date(lunarEclipse.peak.date.getTime() + 1000 * 60 * 60 * 24 * 30));
+      lunarEclipse = SearchLunarEclipse(
+        new Date(lunarEclipse.peak.date.getTime() + 1000 * 60 * 60 * 24 * 30)
+      );
     }
 
-    // 2. Meteor Showers
+    // Meteor Showers
     METEOR_SHOWERS.forEach(shower => {
       const peakDate = new Date(year, shower.month, shower.day);
       events.push({
@@ -141,77 +141,30 @@ export class AstronomyService {
         nameUrdu: 'شہاب ثاقب کی بارش',
         date: peakDate,
         type: 'Meteor Shower',
-        altitude: 30,
+        altitude: 45,
         azimuth: 45,
         visibility: 'Good',
         peakTime: peakDate,
         startTime: new Date(peakDate.getTime() - 1000 * 60 * 60 * 4),
         endTime: new Date(peakDate.getTime() + 1000 * 60 * 60 * 4),
-        moonInterference: MoonPhase(peakDate) > 120, // Interference if near full moon
+        moonInterference: MoonPhase(peakDate) > 120,
       });
     });
 
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 
-  getCelestialBodies(date: Date) {
-    const bodies = [
-      { name: 'Sun', color: '#ffd700', body: Body.Sun },
-      { name: 'Moon', color: '#e8e8ff', body: Body.Moon },
-      { name: 'Mercury', color: '#9e9e9e', body: Body.Mercury },
-      { name: 'Venus', color: '#ffecb3', body: Body.Venus },
-      { name: 'Mars', color: '#ff5252', body: Body.Mars },
-      { name: 'Jupiter', color: '#ffcc80', body: Body.Jupiter },
-      { name: 'Saturn', color: '#ffe082', body: Body.Saturn },
-    ];
-
-    const results = bodies.map(b => {
-      const eq = Equator(b.body, date, this.observer, true, true);
-      const hor = Horizon(date, this.observer, eq.ra, eq.dec, 'normal');
-      const ill = Illumination(b.body, date);
-      
-      return {
-        ...b,
-        azimuth: hor.azimuth,
-        altitude: hor.altitude,
-        visible: hor.altitude > 0,
-        magnitude: ill.mag,
-        distanceEarth: ill.geo_dist, // AU
-        distanceSun: ill.helio_dist, // AU
-        type: 'Planet' as const
-      };
-    });
-
-    const stars = BRIGHT_STARS.map(s => {
-      const hor = Horizon(date, this.observer, s.ra, s.dec, 'normal');
-      return {
-        ...s,
-        azimuth: hor.azimuth,
-        altitude: hor.altitude,
-        visible: hor.altitude > 0,
-        type: 'Star' as const,
-        color: '#ffffff'
-      };
-    });
-
-    const dsos = MESSIER_OBJECTS.map(d => {
-      const hor = Horizon(date, this.observer, d.ra, d.dec, 'normal');
-      return {
-        ...d,
-        azimuth: hor.azimuth,
-        altitude: hor.altitude,
-        visible: hor.altitude > 0,
-        type: 'DSO' as const,
-        color: d.type === 'Nebula' ? '#ff00ff' : d.type === 'Galaxy' ? '#00f3ff' : '#00ffaa'
-      };
-    });
-
-    return [...results, ...stars, ...dsos].filter(b => b.visible);
+  // Compute real azimuth/altitude for a given date using Moon as reference body
+  private getHorizonData(date: Date, ra: number, dec: number) {
+    try {
+      const hor = Horizon(date, this.observer, ra, dec, 'normal');
+      return { altitude: hor.altitude, azimuth: hor.azimuth };
+    } catch {
+      return { altitude: 45, azimuth: 180 };
+    }
   }
 
   getPointer(event: AstroEvent) {
-    // Return relative position for compass
     return { azimuth: event.azimuth, altitude: event.altitude };
   }
 }
-

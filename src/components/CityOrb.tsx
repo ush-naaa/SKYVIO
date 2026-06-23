@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../App';
 import { PAKISTANI_CITIES } from '../constants';
 import { MapPin, X, Globe } from 'lucide-react';

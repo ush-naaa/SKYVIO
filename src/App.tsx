@@ -68,8 +68,8 @@ export default function App() {
                 </div>
               </div>
               <div>
-                <h1 className="text-base font-black tracking-tighter uppercase cosmic-text leading-none">SkyPak</h1>
-                <p className="text-[7px] font-black uppercase tracking-widest text-white/20 leading-none">Pakistan Sky Guide</p>
+                <h1 className="text-xl font-black tracking-tighter uppercase cosmic-text leading-none">SkyPak</h1>
+                <p className="text-[8px] font-black uppercase tracking-widest text-white/20 leading-none">Pakistan Sky Guide</p>
               </div>
             </div>
             <Nav />

@@ -122,7 +122,7 @@ https://skyvio-es3xit3eo-ushna.vercel.app
 
 ---
 
-## 🌌 Behind Skyvio
+## Behind Skyvio
 
 Made with curiosity, countless cups of chai ☕, and a fascination with the night sky.
 

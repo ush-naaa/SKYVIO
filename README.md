@@ -5,7 +5,7 @@ Skyvio is a bilingual (English/Urdu) web app that helps Pakistani astronomy enth
 
 ---
 
-## ✨ The Problem
+## The Problem
 
 When a meteor shower, eclipse, or planetary event occurs, Pakistanis have no dedicated tool to find out:
 
@@ -17,7 +17,7 @@ Generic western astronomy apps don't account for Pakistani cities, time zones, o
 
 ---
 
-## 🚀 Features
+## Features
 
 - 🌠 **Sky Events Calendar** — Eclipses, meteor showers, moon phases, and planet oppositions computed for the entire year
 - 📍 **Real Visibility Check** — Tap any event to fetch real altitude and compass direction for your selected Pakistani city
@@ -28,7 +28,7 @@ Generic western astronomy apps don't account for Pakistani cities, time zones, o
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
@@ -43,7 +43,7 @@ Generic western astronomy apps don't account for Pakistani cities, time zones, o
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 ```text
 Event Computation (astronomy-engine)
@@ -64,7 +64,7 @@ Live Navigation (DeviceOrientationEvent)
 
 ---
 
-## 💻 Running Locally
+## Running Locally
 
 ```bash
 git clone https://github.com/ush-naaa/SkyPak.git
@@ -84,7 +84,7 @@ Get free API credentials from **AstronomyAPI**.
 
 ---
 
-## 💡 Key Technical Decisions
+## Key Technical Decisions
 
 ### Why two astronomy data sources?
 
@@ -104,15 +104,15 @@ Instead, Skyvio requests data only when a user expands an event, reducing API us
 
 ---
 
-## 📱 Live Demo
+## Live Demo
 
-**Coming soon:** *your-vercel-url-here*
+https://skyvio-es3xit3eo-ushna.vercel.app
 
 > Best experienced on mobile — the live compass requires your phone's motion sensors.
 
 ---
 
-## 🌌 Future Improvements
+## Future Improvements
 
 - 🔔 Push notifications for upcoming astronomical events
 - 🗺 Dark-sky map showing the best stargazing spots across Pakistan
@@ -122,12 +122,11 @@ Instead, Skyvio requests data only when a user expands an event, reducing API us
 
 ---
 
-## 🌙 About the Developer
+## 🌌 Behind Skyvio
 
-Made with curiosity, too many late-night debugging sessions, and a love for looking up at the sky.
+Made with curiosity, countless cups of chai ☕, and a fascination with the night sky.
 
-**Ushna Saad**  
-Software Engineering Student • AI/ML Enthusiast • Full-Stack Developer
+Built by **Ushna Saad**
 
 GitHub: https://github.com/ush-naaa
 

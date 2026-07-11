@@ -1,152 +1,136 @@
-# 🌌 SkyPak — The Celestial Gateway for Pakistan 🇵🇰
-
-[![React](https://img.shields.io/badge/React-19.0-blue?logo=react&logoColor=white&color=087ea4)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript&logoColor=white&color=3178c6)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.2-purple?logo=vite&logoColor=white&color=646cff)](https://vite.dev/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38bdf8?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Gemini AI](https://img.shields.io/badge/Gemini_AI-Google_Gen_AI-orange?logo=google-gemini&logoColor=white&color=ea4335)](https://ai.google.dev/)
-
-An advanced, responsive, and aesthetically stunning stargazing assistant and astronomy web suite, custom-tailored for the geographic coordinates, local time zones (PKT), and light pollution realities of Pakistan.
+Here it is — copy everything between the lines:
 
 ---
 
-## ✨ Features
+```
+# Skyvio 🌙
+### Pakistan's Sky Guide — Find astronomical events visible from your city
 
-SkyPak offers a suite of highly-interactive tools powered by real-time orbital calculations and generative AI:
-
-### 1. 🌌 Cosmic Dashboard
-*   **City-Specific Metrics:** Track live coordinates, time, and sky condition metrics for major Pakistani cities (Karachi, Lahore, Islamabad, Peshawar, Quetta, Multan, Faisalabad, and Rawalpindi).
-*   **Bortle Scale Integration:** Displays real-time light pollution classifications (from Low/Bortle 4 up to High/Bortle 8) helping users determine stargazing quality.
-*   **Celestial Tracking:** Immediate altitude, azimuth, and visibility state of the Sun, Moon, and active planets.
-
-### 2. 🗺️ Interactive Sky Map
-*   A fluid, beautifully styled real-time rendering of constellations, bright stars, and deep-sky objects (DSOs) visible in the night sky above Pakistan at any given moment.
-*   Distinguishes celestial types with distinct color codes (e.g., Nebulae in magenta, Galaxies in cyan, and Clusters in green).
-
-### 3. 📅 Astronomy Calendar
-*   **Event Predictor:** Solar & Lunar eclipses calculated with precise local start, peak, and end times.
-*   **Moon Phases:** Track Moon phases (New Moon, Quarter Moon, Full Moon) with exact illumination levels.
-*   **Meteor Showers:** Dynamic visibility and ZHR (Zenithal Hourly Rate) tracker for annual meteor showers like the Perseids and Geminids, automatically accounting for lunar brightness interference.
-
-### 4. 🔭 "Can I See It?" Visibility Engine
-*   Mathematical evaluation of stargazing probability for iconic constellations and deep-sky objects from your selected city.
-*   Calculates real-time atmospheric altitude, azimuth, and Moon interference to deliver active ratings (`Excellent`, `Good`, `Poor`).
-
-### 5. 🧭 Tactical Alignment Compass
-*   An interactive, responsive compass designed to map astronomical azimuth and altitude onto physical vectors. Helps stargazers accurately locate targets in the sky.
-
-### 6. 🗺️ Dark Sky Explorer
-*   A curated database of pristine dark sky reserves and low-light pollution sanctuaries across Pakistan (from the coastal regions of Balochistan to the high-altitude peaks of the Karakoram).
-
-### 7. 💬 AI Chat Assistant (SkyPak Assistant)
-*   **Powered by Gemini:** Integrates `@google/genai` to offer localized stargazing advice, historical astro-knowledge, and telescope guidance.
-*   **Bilingual & Context-Aware:** Fully supports English and Urdu (`اردو`). Automatically tracks your selected city, current time, and local sky conditions to provide customized stargazing plans.
+Skyvio is a bilingual (English/Urdu) web app that helps Pakistani astronomy enthusiasts discover upcoming sky events, check if they're visible from their city, and find exactly where to look using a live compass.
 
 ---
 
-## 🛠️ Technology Stack
+## The Problem
 
-*   **Frontend Library:** React 19 (Functional components, Context API, custom hooks)
-*   **Language:** TypeScript (Fully typed interfaces for `AstroEvent`, `City`, `DarkSkySite`)
-*   **Build Pipeline:** Vite 6 + ES Modules
-*   **Styling & UI:** Tailwind CSS v4 + custom CSS effects (glassmorphism, radial stars, cosmic glow)
-*   **Animations:** `motion` (Framer Motion / Motion One) for hardware-accelerated, high-fidelity micro-interactions
-*   **Calculations Engine:** `astronomy-engine` (High-precision Keplerian orbital and eclipse calculations)
-*   **AI SDK:** `@google/genai` (Official Google Gen AI SDK utilizing the latest Gemini models)
-*   **Utility Libraries:** `date-fns` & `date-fns-tz` for timezone handling (`Asia/Karachi` time calculations)
+When a meteor shower, eclipse, or planetary event occurs, Pakistanis have no dedicated tool to find out:
+- Will it be visible from Lahore, Karachi, or Islamabad?
+- What time should I go outside?
+- Which direction do I look?
+
+Generic western astronomy apps don't account for Pakistani cities, timezones, or language. Skyvio solves this.
 
 ---
 
-## 📂 Project Structure
+## Features
 
-```bash
-SkyPak/
-├── src/
-│   ├── components/      # Reusable UI components
-│   │   ├── ChatAssistant.tsx  # Gemini-powered chat UI (bilingual, context-aware)
-│   │   ├── CityOrb.tsx        # Dynamic 3D-feeling city selector and pollution guide
-│   │   ├── Nav.tsx            # Animated navigation header
-│   │   └── StarField.tsx      # Procedural starry background animation
-│   ├── pages/           # Feature-rich modular view components
-│   │   ├── Dashboard.tsx      # Localized sky status & core statistics
-│   │   ├── Calendar.tsx       # Eclipses, Moon phases, and meteor showers
-│   │   ├── SkyMap.tsx         # Real-time interactive sky plotter
-│   │   ├── CanISeeIt.tsx      # Visibility calculations and object lists
-│   │   ├── Compass.tsx        # Celestial vector positioning tool
-│   │   └── DarkSkyExplorer.tsx# Bortle guide to Pakistani stargazing sanctuaries
-│   ├── services/        # Third-party integrations & computations
-│   │   ├── astronomyService.ts# Core astronomical calculations (via astronomy-engine)
-│   │   └── geminiService.ts   # Gemini AI API connector and system prompt
-│   ├── data/            # Static databases
-│   │   ├── stars.ts           # Bright star database (RA/Dec coordinates)
-│   │   └── dso.ts             # Messier/Deep-sky object catalog
-│   ├── App.tsx          # Application shell & Global context provider
-│   ├── index.css        # Core custom animations, fonts, and dark space variables
-│   ├── main.tsx         # Root mounting configuration
-│   ├── types.ts         # Central TypeScript interfaces
-│   └── constants.ts     # Meteorological data & geographic constants for Pakistan
-├── index.html           # Document entrypoint
-├── package.json         # Dependency manifest
-├── tsconfig.json        # TypeScript configuration
-├── vite.config.ts       # Vite compilation settings
-└── .gitignore           # Version control exemptions
+- **Sky Events Calendar** — Eclipses, meteor showers, moon phases, and planet oppositions computed for the entire year
+- **Real Visibility Check** — Tap any event to fetch real altitude and compass direction for your selected Pakistani city
+- **Live Compass Navigator** — Uses your phone's gyroscope to point you at the event in real time
+- **8 Pakistani Cities** — Karachi, Lahore, Islamabad, Peshawar, Quetta, Multan, Faisalabad, Rawalpindi
+- **Bilingual** — Full English and Urdu support with RTL layout
+- **Month Grouping** — Events organized by month for easy browsing
+
+---
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| React + TypeScript | Frontend framework |
+| Vite | Build tool |
+| astronomy-engine | Local orbital mechanics — computes event dates and positions |
+| AstronomyAPI.com | Real-time sky position per city (altitude, azimuth) |
+| DeviceOrientationEvent | Browser API for live compass heading |
+| Framer Motion | Animations and compass spring physics |
+| TailwindCSS | Styling |
+| Vercel | Deployment |
+
+---
+
+## Architecture
+
+```
+Event Computation (astronomy-engine)
+└── Runs locally, no API needed
+└── Computes: eclipses, moon phases, meteor showers, planet oppositions
+
+Visibility Check (AstronomyAPI)
+└── Called on demand when user expands an event
+└── Returns real altitude + azimuth for selected city
+└── Cached per session to avoid duplicate calls
+
+Live Navigation (DeviceOrientationEvent)
+└── Native browser API — no library needed
+└── Reads phone compass heading in real time
+└── Needle rotates to point at event's azimuth
+└── Turns green when phone is aligned
 ```
 
 ---
 
-## 🚀 Getting Started
+## Running Locally
 
-### Prerequisites
+```bash
+# Clone the repository
+git clone https://github.com/ush-naaa/SkyPak.git
+cd SkyPak
 
-*   [Node.js](https://nodejs.org/) (v18.0.0 or higher recommended)
-*   An active Google Gemini API Key (obtained from [Google AI Studio](https://aistudio.google.com/))
+# Install dependencies
+npm install
 
-### Installation
+# Create environment file and add your AstronomyAPI credentials
+VITE_ASTRONOMY_APP_ID=your_app_id
+VITE_ASTRONOMY_APP_SECRET=your_app_secret
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/your-username/skypak.git
-    cd skypak
-    ```
+# Start development server
+npm run dev
+```
 
-2.  **Install Project Dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Configure Environment Variables:**
-    Create a `.env.local` file in the root directory and append your Gemini API key:
-    ```env
-    GEMINI_API_KEY=your_actual_gemini_api_key_here
-    ```
-
-4.  **Launch the Development Server:**
-    ```bash
-    npm run dev
-    ```
-    *The application will boot on `http://localhost:3000`.*
-
-5.  **Compile Production Build:**
-    To build the highly-optimized production bundle, run:
-    ```bash
-    npm run build
-    ```
+Get free API credentials at [astronomyapi.com](https://astronomyapi.com)
 
 ---
 
-## 🌌 Stargazing Regions Covered (Dark Sky Explorer)
+## Environment Variables
 
-SkyPak catalogs and guides users to several legendary stargazing spots within Pakistan's provinces:
-*   **Deosai National Park** (Gilgit-Baltistan) — Bortle Class 1 (Pristine Dark Sky)
-*   **Gorakh Hill** (Sindh) — Bortle Class 3 (Rural Sky)
-*   **Hingol National Park** (Balochistan) — Bortle Class 2 (Typical Dark Sky)
-*   **Kalash Valleys** (Khyber Pakhtunkhwa) — Bortle Class 2 (Typical Dark Sky)
-*   **Cholistan Desert** (Punjab) — Bortle Class 3 (Rural Sky)
+| Variable | Description |
+|---|---|
+| `VITE_ASTRONOMY_APP_ID` | AstronomyAPI Application ID |
+| `VITE_ASTRONOMY_APP_SECRET` | AstronomyAPI Application Secret |
 
 ---
 
-## 🤝 Contribution & License
+## Key Technical Decisions
 
-Contributions, bug reports, and feature requests are welcome! Feel free to open issues or submit pull requests to enhance the stargazing experience for the Pakistani astronomy community.
+**Why two astronomy data sources?**
+astronomy-engine runs locally and computes event dates without API calls. AstronomyAPI handles location-specific visibility and is only called on demand when a user needs real coordinates, keeping usage within free tier limits.
 
-*Designed with ❤️ for the dreamers, students, and stargazers of Pakistan.*
+**Why DeviceOrientationEvent instead of a library?**
+It is a native browser API that reads the phone's actual compass hardware. No third-party dependency, works on both iOS and Android with appropriate permission handling for each platform.
+
+**Why on-demand visibility fetching?**
+Loading visibility for all events upfront would require 30+ API calls and hit rate limits. Fetching only when a user taps an event keeps the app fast and within free tier limits.
+
+---
+
+## Live Demo
+
+https://skyvio.vercel.app
+
+Best experienced on mobile — the live compass requires a phone's motion sensors.
+
+---
+
+## What I'd Add Next
+
+- Push notifications for upcoming events
+- Dark sky map showing best stargazing spots in Pakistan
+- Planetary conjunctions and Venus/Mercury elongations
+- Offline support with cached event data
+- ISS pass predictions for Pakistani cities
+
+---
+
+
+---
+
+Replace `[your-vercel-url-here]` with your actual Vercel URL once it's live. Also update the GitHub clone URL if your repo name changes from SkyPak to Skyvio.

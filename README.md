@@ -130,4 +130,4 @@ Built by **Ushna Saad**
 
 GitHub: https://github.com/ush-naaa
 
-*"The universe is huge. This project just helps you find where to look." ✨
+"The universe is huge. This project just helps you find where to look."

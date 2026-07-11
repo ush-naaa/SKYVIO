@@ -43,6 +43,7 @@ export const Calendar: React.FC = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [skyCache, setSkyCache] = useState<Record<string, SkyPosition>>({});
   const [skyLoading, setSkyLoading] = useState<string | null>(null);
+  const [skyError, setSkyError] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setLoading(true);
@@ -59,16 +60,20 @@ export const Calendar: React.FC = () => {
   }, [city]);
 
   const fetchSkyData = useCallback(async (event: AstroEvent) => {
-    if (skyCache[event.id]) return;
-    setSkyLoading(event.id);
+  if (skyCache[event.id]) return;
+  setSkyLoading(event.id);
+  try {
     const bodyId = getBodyIdForEvent(event.type, event.name);
     const viewTime = new Date(event.peakTime);
     viewTime.setHours(21, 0, 0, 0);
     const pos = await getSkyPosition(city, viewTime, bodyId);
     setSkyCache(prev => ({ ...prev, [event.id]: pos }));
+  } catch {
+    setSkyError(prev => ({ ...prev, [event.id]: true }));
+  } finally {
     setSkyLoading(null);
-  }, [skyCache, city]);
-
+  }
+}, [skyCache, city]);
   const handleExpand = (event: AstroEvent) => {
     const isExpanding = expanded !== event.id;
     setExpanded(isExpanding ? event.id : null);
@@ -236,6 +241,12 @@ export const Calendar: React.FC = () => {
                                   <div className="flex items-center gap-2 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-white/30">
                                     <Loader2 size={12} className="animate-spin" />
                                     Checking visibility for {city.name}...
+                                  </div>
+                                )}
+
+                                {skyError[event.id] && !isLoadingSky && (
+                                  <div className="flex items-center gap-2 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-400/40">
+                                    <span>Could not fetch sky data. Try again later.</span>
                                   </div>
                                 )}
 

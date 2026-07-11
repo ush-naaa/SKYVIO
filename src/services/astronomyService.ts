@@ -182,7 +182,7 @@ export class AstronomyService {
     for (const planet of planets) {
       try {
         let searchDate = startDate;
-        for (let attempt = 0; attempt < 2; attempt++) {
+        for (let attempt = 0; attempt < 1; attempt++) {
           const opposition = SearchRelativeLongitude(planet.body, 180, searchDate);
           if (opposition && opposition.date.getFullYear() === year) {
             const hor = this.getPlanetHorizon(opposition.date, planet.body);

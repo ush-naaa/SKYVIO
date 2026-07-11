@@ -30,17 +30,17 @@ export const useApp = () => {
 
 export default function App() {
   const [city, setCity] = useState<City>(() => {
-    const saved = localStorage.getItem('skypak-city');
+    const saved = localStorage.getItem('skyvio-city');
     return PAKISTANI_CITIES.find(c => c.id === saved) || PAKISTANI_CITIES[0];
   });
   const [lang, setLang] = useState<Language>(() =>
-    (localStorage.getItem('skypak-lang') as Language) || 'en'
+    (localStorage.getItem('skyvio-lang') as Language) || 'en'
   );
   const [currentPage, setCurrentPage] = useState('calendar');
   const [selectedEvent, setSelectedEvent] = useState<AstroEvent | null>(null);
 
-  useEffect(() => { localStorage.setItem('skypak-city', city.id); }, [city]);
-  useEffect(() => { localStorage.setItem('skypak-lang', lang); }, [lang]);
+  useEffect(() => { localStorage.setItem('skyvio-city', city.id); }, [city]);
+  useEffect(() => { localStorage.setItem('skyvio-lang', lang); }, [lang]);
 
   const navigateTo = (page: string, event?: AstroEvent) => {
     if (event) setSelectedEvent(event);
@@ -58,8 +58,8 @@ export default function App() {
         <SpaceBackground />
 
         {/* Header — logo + language + city */}
-        <header className="fixed top-0 left-0 right-0 z-40 px-4 pt-3 pb-2">
-          <div className="max-w-5xl mx-auto glass-strong flex items-center justify-between px-5 py-3">
+        <header className="fixed top-0 left-0 right-0 z-40 pt-3 pb-2">
+          <div className="glass-strong flex items-center justify-between px-6 py-3 mx-4 rounded-2xl">
             <div className="flex items-center gap-3 shrink-0">
               <div className="relative w-8 h-8">
                 <div className="absolute inset-0 rounded-full bg-celestial-blue/20 blur-sm" />
@@ -68,7 +68,7 @@ export default function App() {
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-black tracking-tighter uppercase cosmic-text leading-none">SkyPak</h1>
+                <h1 className="text-xl font-black tracking-tighter uppercase cosmic-text leading-none">Skyvio</h1>
                 <p className="text-[8px] font-black uppercase tracking-widest text-white/20 leading-none">Pakistan Sky Guide</p>
               </div>
             </div>

@@ -104,7 +104,7 @@ export const Calendar: React.FC = () => {
         <p className="text-[10px] font-black uppercase tracking-widest text-void-cyan/60">
           {city.name} · Pakistan · {new Date().getFullYear()}
         </p>
-        <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none">
           <span className="cosmic-text">{lang === 'ur' ? 'پاکستان' : 'Pakistan'}</span>{' '}
           <span className="text-white/80">{lang === 'ur' ? 'آسمانی واقعات' : 'Sky Events'}</span>
         </h1>

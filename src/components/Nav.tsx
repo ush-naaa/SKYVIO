@@ -12,7 +12,7 @@ export const Nav: React.FC = () => {
           <button
             key={l}
             onClick={() => setLang(l)}
-            className={`px-3 py-1.5 text-[9px] font-black transition-all uppercase tracking-widest ${
+            className={`px-2 py-1 text-[8px] font-black transition-all uppercase tracking-widest ${
               lang === l ? 'bg-celestial-blue text-white' : 'text-white/30 hover:text-white/70'
             }`}
           >

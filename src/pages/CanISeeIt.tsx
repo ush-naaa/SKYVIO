@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useApp } from '../App';
 import { AstronomyService } from '../services/astronomyService';
 import { getSkyPosition, getBodyIdForEvent, SkyPosition } from '../services/astronomyApiService';
@@ -21,6 +21,23 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
   const [heading, setHeading] = useState<number | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const smoothedHeading = useRef<number | null>(null);
+  const lastUpdate = useRef<number>(0);
+
+  const processHeading = (raw: number) => {
+    const now = Date.now();
+    if (now - lastUpdate.current < 50) return;
+    lastUpdate.current = now;
+    if (smoothedHeading.current === null) {
+      smoothedHeading.current = raw;
+    } else {
+      let diff = raw - smoothedHeading.current;
+      if (diff > 180) diff -= 360;
+      if (diff < -180) diff += 360;
+      smoothedHeading.current = (smoothedHeading.current + 0.4 * diff + 360) % 360;
+    }
+    setHeading(Math.round(smoothedHeading.current));
+  };
 
   useEffect(() => {
     const ios = typeof (DeviceOrientationEvent as any).requestPermission === 'function';
@@ -28,7 +45,7 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
     if (!ios) {
       const handler = (e: DeviceOrientationEvent) => {
         const h = e.alpha !== null ? 360 - e.alpha : null;
-        if (h !== null) setHeading(Math.round(h));
+        if (h !== null) processHeading(h);
       };
       window.addEventListener('deviceorientation', handler, true);
       return () => window.removeEventListener('deviceorientation', handler, true);
@@ -41,7 +58,7 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
       if (result === 'granted') {
         const handler = (e: DeviceOrientationEvent) => {
           const h = (e as any).webkitCompassHeading ?? (e.alpha !== null ? 360 - e.alpha : null);
-          if (h !== null) setHeading(Math.round(h));
+          if (h !== null) processHeading(h);
         };
         window.addEventListener('deviceorientation', handler, true);
       } else {
@@ -68,8 +85,8 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
         </div>
       )}
 
-      <div className="relative w-80 h-80">
-        <div className={`absolute inset-0 rounded-full transition-all duration-700 ${
+      <div className="relative w-72 h-72">
+        <div className={`absolute inset-0 rounded-full transition-all duration-300 ${
           aligned
             ? 'shadow-[0_0_60px_rgba(74,222,128,0.4)] border-2 border-green-400'
             : 'shadow-[0_0_40px_rgba(56,103,214,0.2)] border-2 border-white/8'
@@ -78,20 +95,21 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
           background: 'radial-gradient(circle at center, rgba(56,103,214,0.08) 0%, rgba(0,0,0,0.4) 100%)',
         }} />
 
+        {/* Rotating dial */}
         <motion.div
           className="absolute inset-0 rounded-full"
           animate={{ rotate: dialRotation }}
-          transition={{ type: 'spring', stiffness: 50, damping: 12 }}
+          transition={{ type: "tween", duration: 0.05, ease: "linear" }}
         >
           {['N','NE','E','SE','S','SW','W','NW'].map((label, i) => {
             const angle = i * 45;
             const rad = (angle - 90) * (Math.PI / 180);
-            const r = 130;
-            const cx = 160;
+            const r = 118;
+            const cx = 144;
             return (
               <div
                 key={label}
-                className={`absolute font-black -translate-x-1/2 -translate-y-1/2 ${label === 'N' ? 'text-red-400 text-base' : 'text-white/35 text-xs'}`}
+                className={`absolute font-black -translate-x-1/2 -translate-y-1/2 ${label === 'N' ? 'text-red-400 text-sm' : 'text-white/35 text-xs'}`}
                 style={{ left: cx + r * Math.cos(rad), top: cx + r * Math.sin(rad) }}
               >
                 {label}
@@ -105,35 +123,36 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
             return (
               <div key={i} className="absolute left-1/2 top-1/2 origin-top" style={{
                 width: isMajor ? '2px' : '1px',
-                height: isMajor ? '14px' : isMid ? '9px' : '5px',
+                height: isMajor ? '12px' : isMid ? '8px' : '4px',
                 background: isMajor ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.12)',
-                transform: `rotate(${angle}deg) translateX(-50%) translateY(-${143}px)`,
+                transform: `rotate(${angle}deg) translateX(-50%) translateY(-${130}px)`,
               }} />
             );
           })}
         </motion.div>
 
+        {/* Needle */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           animate={{ rotate: needleRotation }}
-          transition={{ type: 'spring', stiffness: 60, damping: 14 }}
+          transition={{ type: "tween", duration: 0.05, ease: "linear" }}
         >
-          <div className="relative flex flex-col items-center" style={{ height: 130 }}>
+          <div className="relative flex flex-col items-center" style={{ height: 118 }}>
             <div className="w-0 h-0" style={{
-              borderLeft: '8px solid transparent',
-              borderRight: '8px solid transparent',
-              borderBottom: '26px solid #60a5fa',
-              filter: 'drop-shadow(0 0 10px rgba(96,165,250,0.9))',
+              borderLeft: '7px solid transparent',
+              borderRight: '7px solid transparent',
+              borderBottom: '22px solid #60a5fa',
+              filter: 'drop-shadow(0 0 8px rgba(96,165,250,0.9))',
             }} />
-            <div className="w-2 flex-1 rounded-b-full" style={{
+            <div className="w-1.5 flex-1 rounded-b-full" style={{
               background: 'linear-gradient(to bottom, #60a5fa, #3b6fd4)',
-              boxShadow: '0 0 12px rgba(96,165,250,0.4)',
+              boxShadow: '0 0 10px rgba(96,165,250,0.4)',
             }} />
           </div>
         </motion.div>
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-5 h-5 rounded-full bg-white shadow-[0_0_16px_rgba(255,255,255,0.7)]" />
+          <div className="w-4 h-4 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.7)]" />
         </div>
 
         <AnimatePresence>
@@ -152,7 +171,7 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
 
       <div className="text-center space-y-1">
         <p className="text-white/30 text-xs uppercase tracking-widest font-black">{t.pointPhone}</p>
-        <p className="text-3xl font-black text-white">{getDir(safe, lang)}</p>
+        <p className="text-2xl font-black text-white">{getDir(safe, lang)}</p>
         <p className="text-white/40 text-sm">
           {t.lookAbove} <span className="text-blue-400 font-bold">{isNaN(altitude) ? 0 : altitude}°</span>
           {' · '}
@@ -247,7 +266,6 @@ export const CanISeeIt: React.FC = () => {
         <p className="text-white/30 text-sm">{t.findSubtitle}</p>
       </div>
 
-      {/* Event selector */}
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
         {events.slice(0, 12).map(event => (
           <button
@@ -273,21 +291,18 @@ export const CanISeeIt: React.FC = () => {
         ))}
       </div>
 
-      {/* Sky loading */}
       {skyLoading && (
         <div className="text-center py-8 text-celestial-blue/60 font-black text-xs uppercase tracking-widest animate-pulse">
           {t.checkingVisibility} {city.name}...
         </div>
       )}
 
-      {/* Sky error */}
       {skyError && !skyLoading && (
         <div className="text-center py-8 text-red-400/50 font-black text-xs uppercase tracking-widest">
           Could not load sky data. Check your connection and try again.
         </div>
       )}
 
-      {/* Result */}
       {selected && skyData && !skyLoading && !skyError && (
         <motion.div
           key={selected.id}
@@ -317,7 +332,7 @@ export const CanISeeIt: React.FC = () => {
           </div>
 
           {isVisible ? (
-            <div className="glass p-8 rounded-3xl flex flex-col items-center">
+            <div className="glass p-6 rounded-3xl flex flex-col items-center">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/25 mb-6 text-center">
                 {t.rotatePhone}
               </p>

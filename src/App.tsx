@@ -58,8 +58,8 @@ export default function App() {
         <SpaceBackground />
 
         {/* Header — logo + language + city */}
-        <header className="fixed top-0 left-0 right-0 z-40 pt-3 pb-2">
-          <div className="glass-strong flex items-center justify-between px-6 py-3 mx-4 rounded-2xl">
+        <header className="fixed top-0 left-0 right-0 z-40 pt-2 pb-1.5">
+          <div className="glass-strong flex items-center justify-between px-4 py-2 mx-3 rounded-xl">
             <div className="flex items-center gap-3 shrink-0">
               <div className="relative w-8 h-8">
                 <div className="absolute inset-0 rounded-full bg-celestial-blue/20 blur-sm" />
@@ -68,7 +68,7 @@ export default function App() {
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-black tracking-tighter uppercase cosmic-text leading-none">Skyvio</h1>
+                <h1 className="text-base font-black tracking-tighter uppercase cosmic-text leading-none">Skyvio</h1>
                 <p className="text-[8px] font-black uppercase tracking-widest text-white/20 leading-none">Pakistan Sky Guide</p>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function App() {
         </header>
 
         {/* Page content */}
-        <main className="relative z-10 pt-24 pb-32 px-4 max-w-5xl mx-auto">
+        <main className="relative z-10 pt-20 pb-36 px-4 max-w-5xl mx-auto">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}

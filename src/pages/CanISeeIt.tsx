@@ -12,8 +12,7 @@ const getDir = (az: number, lang: 'en' | 'ur') => {
   if (isNaN(az)) return lang === 'ur' ? 'شمال' : 'North';
   const en = ['North','Northeast','East','Southeast','South','Southwest','West','Northwest'];
   const ur = ['شمال','شمال مشرق','مشرق','جنوب مشرق','جنوب','جنوب مغرب','مغرب','شمال مغرب'];
-  const idx = Math.round(az / 45) % 8;
-  return lang === 'ur' ? ur[idx] : en[idx];
+  return lang === 'ur' ? ur[Math.round(az / 45) % 8] : en[Math.round(az / 45) % 8];
 };
 
 const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'ur' }> = ({ azimuth, altitude, lang }) => {
@@ -95,11 +94,10 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
           background: 'radial-gradient(circle at center, rgba(56,103,214,0.08) 0%, rgba(0,0,0,0.4) 100%)',
         }} />
 
-        {/* Rotating dial */}
         <motion.div
           className="absolute inset-0 rounded-full"
           animate={{ rotate: dialRotation }}
-          transition={{ type: "tween", duration: 0.05, ease: "linear" }}
+          transition={{ type: 'tween', duration: 0.05, ease: 'linear' }}
         >
           {['N','NE','E','SE','S','SW','W','NW'].map((label, i) => {
             const angle = i * 45;
@@ -131,11 +129,10 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
           })}
         </motion.div>
 
-        {/* Needle */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           animate={{ rotate: needleRotation }}
-          transition={{ type: "tween", duration: 0.05, ease: "linear" }}
+          transition={{ type: 'tween', duration: 0.05, ease: 'linear' }}
         >
           <div className="relative flex flex-col items-center" style={{ height: 118 }}>
             <div className="w-0 h-0" style={{
@@ -154,19 +151,6 @@ const LiveCompass: React.FC<{ azimuth: number; altitude: number; lang: 'en' | 'u
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-4 h-4 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.7)]" />
         </div>
-
-        <AnimatePresence>
-          {aligned && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-green-400 text-xs font-black uppercase tracking-widest whitespace-nowrap"
-            >
-              {t.aligned} {altitude}°
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       <div className="text-center space-y-1">
